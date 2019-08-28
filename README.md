@@ -1,15 +1,33 @@
 # Laravel + Vue-CLI
 
-# How to run
+## Vue-CLI
 
-Dependencies:
+In `frontend` folder run `npm run serve`, it serve vuejs app and proxy all unknown request to `http://localhost:8000`
+
+## Docker-compose
+
+Create a server that serve `frontend/dist` except if url requested:
+
+- Begin by `/api/`
+- Begin by `/oauth/`
+- End by `.php`
+
+### How to run
+
+#### Dependencies:
 
 - Docker engine v1.13 or higher. Your OS provided package might be a little old, if you encounter problems, do upgrade. See [https://docs.docker.com/engine/installation](https://docs.docker.com/engine/installation)
 - Docker compose v1.12 or higher. See [docs.docker.com/compose/install](https://docs.docker.com/compose/install/)
 
-Once you're done, simply `cd` to your project and run `docker-compose up -d`. This will initialise and start all the containers, then leave them running in the background.
+#### First start
 
-## Services exposed outside your environment
+`docker-compose up -d`
+
+#### Start again
+
+`docker-compose start`
+
+#### Services exposed outside docker-compose environment
 
 You can access your application via **`localhost`**, if you're running the containers directly, or through **``** when run on a vm. nginx both respond to any hostname, in case you want to add your own hostname on your `/etc/hosts`
 
@@ -18,7 +36,7 @@ You can access your application via **`localhost`**, if you're running the conta
 | Webserver | [localhost:8000](http://localhost:8000) |
 | MySQL     | **host:** `localhost`; **port:** `8002` |
 
-## Hosts within your environment
+#### Hosts within docker-compose environment
 
 You'll need to configure your application to use any services you enabled:
 
@@ -28,7 +46,7 @@ You'll need to configure your application to use any services you enabled:
 | MySQL          | mysql    | 3306 (default) |
 | Redis          | redis    | 6379 (default) |
 
-# Docker compose cheatsheet
+### Docker-compose cheatsheet
 
 **Note:** you need to cd first to where your docker-compose.yml file lives.
 
@@ -41,7 +59,7 @@ You'll need to configure your application to use any services you enabled:
   _ Shell into the PHP container, `docker-compose exec php-fpm bash`
   _ Run symfony console, `docker-compose exec php-fpm bin/console` \* Open a mysql shell, `docker-compose exec mysql mysql -uroot -pCHOSEN_ROOT_PASSWORD`
 
-# Recommendations
+### Recommendations
 
 It's hard to avoid file permission issues when fiddling about with containers due to the fact that, from your OS point of view, any files created within the container are owned by the process that runs the docker engine (this is usually root). Different OS will also have different problems, for instance you can run stuff in containers using `docker exec -it -u $(id -u):$(id -g) CONTAINER_NAME COMMAND` to force your current user ID into the process, but this will only work if your host OS is Linux, not mac. Follow a couple of simple rules and save yourself a world of hurt.
 
