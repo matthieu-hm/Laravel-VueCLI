@@ -1,0 +1,78 @@
+##############################################################################
+#                  Docker-Compose for Lrv-vuejs Application                  #
+##############################################################################
+version: "3.1"
+services:
+
+    mysql:
+      image: mysql:5.7
+      container_name: lrv-vuejs-mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=laravel
+        - MYSQL_USER=user
+        - MYSQL_PASSWORD=password
+      volumes:
+        - lrv-vuejs-mysqldata:/var/lib/mysql
+      ports:
+        - "8002:3306"
+
+#    redis:
+#      image: redis:alpine
+#      container_name: lrv-vuejs-redis
+#      volumes:
+#        - lrv-vuejs-redisdata:/data
+
+    webserver:
+      depends_on:
+        - php-fpm
+      image: nginx:alpine
+      container_name: lrv-vuejs-webserver
+      working_dir: /
+      volumes:
+        - ./backend:/backend
+        - ./frontend:/frontend
+        - ./docker-compose-files/webserver/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+        - "8000:80"
+
+    php-fpm:
+      build: ./docker-compose-files/php-fpm
+      image: lrv-vuejs-php-fpm:latest
+      depends_on:
+        - mysql
+        # - redis
+      container_name: lrv-vuejs-php-fpm
+      working_dir: /
+      volumes:
+        - ./backend:/backend
+
+#    php-websocket:
+#      build: ./docker-compose-files/php
+#      image: lrv-vuejs-php:latest
+#      depends_on:
+#        - mysql
+#        - redis
+#      container_name: lrv-vuejs-php-websocket
+#      working_dir: /
+#      volumes:
+#        - ./backend:/backend
+#      ports:
+#        - "8001:8080"
+#      command: ["php", "artisan", "websockets:serve", "--host=0.0.0.0", "--port=8080"]
+
+#    php-horizon:
+#      build: ./docker-compose-files/php
+#      image: lrv-vuejs-php:latest
+#      depends_on:
+#        - mysql
+#        - redis
+#      container_name: lrv-vuejs-php-horizon
+#      working_dir: /
+#      volumes:
+#        - ./backend:/backend
+#      command: ["php", "artisan", "horizon"]
+
+volumes:
+    lrv-vuejs-mysqldata:
+    # lrv-vuejs-redisdata:
